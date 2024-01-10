@@ -1,0 +1,16 @@
+# services: 는 실행할 서비스를 정의하는 위치.
+services:
+  postgres:
+    image: postgres:15
+    # restart: always = 우리가 실행할 때 마다 항상 재시작을 해라.
+    restart: always
+    # voulumes: 도커 이미지 안에 있는 데이터와 host os 안에 있는 데이터를 연동.
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    # ports: 도커 이미지안의 포트랑 host os 안의 포트랑 매핑.
+    ports:
+      - '3001:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
