@@ -1,5 +1,6 @@
 import { PickType } from '@nestjs/mapped-types';
 import { PostsModel } from '../entities/posts.entity';
+import { IsOptional, IsString } from 'class-validator';
 
 /**
  * TypeScript utility
@@ -7,4 +8,8 @@ import { PostsModel } from '../entities/posts.entity';
  * PickType, OmitType, PartialType -> 값을 반환
  */
 
-export class CreatePostDTO extends PickType(PostsModel, ['title', 'content']) {}
+export class CreatePostDTO extends PickType(PostsModel, ['title', 'content']) {
+  @IsString()
+  @IsOptional()
+  image?: string;
+}

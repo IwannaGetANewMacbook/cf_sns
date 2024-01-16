@@ -18,6 +18,7 @@ import {
 } from './common/const/env-keys.const';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
+import { CommonModule } from './common/common.module';
 
 // 다른 모듈을 불러올 때 imports 배열에 등록시킴.
 @Module({
@@ -46,6 +47,7 @@ import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
     }),
     UsersModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [
