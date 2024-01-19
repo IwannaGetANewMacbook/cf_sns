@@ -138,8 +138,17 @@ export class PostsService {
     };
   }
 
-  async getPostById(id: number) {
-    const post = await this.postsRepository.findOne({
+  /**일반 postRepository를 반환하거나, 'query runner' 로 부터 만들어낸 postRepository를 반환함.*/
+  getRepository(qr?: QueryRunner) {
+    return qr
+      ? qr.manager.getRepository<PostsModel>(PostsModel)
+      : this.postsRepository;
+  }
+
+  async getPostById(id: number, qr?: QueryRunner) {
+    const repository = this.getRepository(qr);
+
+    const post = await repository.findOne({
       ...DEFAULT_POST_FIND_OPTIONS,
       where: {
         id: id,
@@ -151,13 +160,6 @@ export class PostsService {
     }
 
     return post;
-  }
-
-  /**일반 postRepository를 반환하거나, 'query runner' 로 부터 만들어낸 postRepository를 반환함.*/
-  getRepository(qr?: QueryRunner) {
-    return qr
-      ? qr.manager.getRepository<PostsModel>(PostsModel)
-      : this.postsRepository;
   }
 
   async createPost(authorId: number, postDto: CreatePostDTO, qr?: QueryRunner) {
