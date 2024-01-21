@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   Body,
   Controller,
@@ -9,6 +11,7 @@ import {
   Post,
   Query,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,13 +22,21 @@ import { UsersModel } from 'src/users/entities/users.entity';
 import { CreatePostDTO } from './dto/create.post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  FileFieldsInterceptor,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  FileInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
+import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
+import { ImagesTransformInterceptor } from './interceptor/images-transform.interceptor';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
+  @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
@@ -45,19 +56,20 @@ export class PostsController {
 
   @Post()
   @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(ImagesTransformInterceptor)
   createPost(
     @User() user: UsersModel,
     @Body() body: CreatePostDTO,
     // @Body('title') title: string,
     // @Body('content') content: string,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFiles() files?: Array<Express.Multer.File>,
   ) {
     return this.postsService.createPost(
       user.id,
       body.title,
       body.content,
-      file?.filename, // 만약 file이 undefined면 undefined 그대로 전달.
+      files, // 만약 file이 undefined면 undefined 그대로 전달.
     );
   }
 

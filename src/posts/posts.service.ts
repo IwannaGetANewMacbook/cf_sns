@@ -29,7 +29,7 @@ export class PostsService {
     for (let i = 0; i < 100; i++) {
       const title = `임의로 생성된 타이틀${i}`;
       const content = `임의로 생성된 컨텐트${i}`;
-      await this.createPost(userId, title, content);
+      await this.createPost(userId, title, content, []);
     }
   }
 
@@ -144,17 +144,23 @@ export class PostsService {
     authorId: number,
     title: string,
     content: string,
-    image?: string,
+    images: Array<Express.Multer.File>,
   ) {
     // 1) create -> 저장할 객체를 생성한다.
     // 2) save -> 객체를 저장한다.(create 메서드에서 생성한 객체로 저장)
+
+    // files 배열에서 filename만 추출.
+    const filenames = [];
+    images.forEach((v) => {
+      filenames.push(v.filename);
+    });
 
     // create() 함수는 동기식으로 처리됨.
     const post = this.postsRepository.create({
       author: { id: authorId },
       title: title,
       content: content,
-      image: image,
+      images: filenames,
       likeCount: 0,
       commentCount: 0,
     });

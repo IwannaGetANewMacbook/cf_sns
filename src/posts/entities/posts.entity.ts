@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
 import { join } from 'path';
@@ -27,11 +28,12 @@ export class PostsModel extends BaseModel {
   })
   content: string;
 
-  @Column({
+  @Column('text', {
     nullable: true,
+    array: true,
   })
-  @Transform(({ value }) => value && `/${join(POST_PUBLIC_IMAGE_PATH, value)}`)
-  image?: string; // img파일은 db에 직접 저장하지 않음. -> db에서는 이미지 위치만 저장. -> 그래서 string타입.
+  // @Transform(({ value }) => value && `/${join(POST_PUBLIC_IMAGE_PATH, value)}`)
+  images: string[]; // img파일은 db에 직접 저장하지 않음. -> db에서는 이미지 위치만 저장. -> 그래서 string타입.
 
   @Column()
   likeCount: number;
@@ -39,4 +41,3 @@ export class PostsModel extends BaseModel {
   @Column()
   commentCount: number;
 }
-//

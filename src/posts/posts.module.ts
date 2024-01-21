@@ -21,6 +21,7 @@ import { v4 as uuid } from 'uuid';
     AuthModule,
     UsersModule,
     CommonModule,
+    // file을 다운로드 받을때 여러가지 옵션들을 제공해 줄 수 있는 기능.
     MulterModule.register({
       // limits = 파일 크기 제한
       limits: {
