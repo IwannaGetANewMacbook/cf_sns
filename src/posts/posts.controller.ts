@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -12,6 +13,7 @@ import {
   Query,
   UploadedFile,
   UploadedFiles,
+  UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -30,6 +32,7 @@ import {
 } from '@nestjs/platform-express';
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { ImagesTransformInterceptor } from './interceptor/images-transform.interceptor';
+import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
 
 @Controller('posts')
 export class PostsController {
@@ -50,6 +53,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @UseInterceptors(LogInterceptor)
   getPost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.getPostById(id);
   }
@@ -57,6 +61,7 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('image'))
+  @UseInterceptors(LogInterceptor)
   @UseInterceptors(ImagesTransformInterceptor)
   createPost(
     @User() user: UsersModel,
@@ -69,12 +74,13 @@ export class PostsController {
       user.id,
       body.title,
       body.content,
-      files, // 만약 file이 undefined면 undefined 그대로 전달.
+      files ? files : undefined, // 만약 file이 undefined면 undefined 그대로 전달.
     );
   }
 
   //
   @Patch(':id')
+  @UseInterceptors(LogInterceptor)
   updatePost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDto,
