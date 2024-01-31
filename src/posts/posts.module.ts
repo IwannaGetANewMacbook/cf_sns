@@ -1,4 +1,11 @@
-import { BadRequestException, Module } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  BadRequestException,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +18,7 @@ import { extname } from 'path';
 import * as multer from 'multer';
 import { POST_IMAGE_PATH } from 'src/common/const/path.const';
 import { v4 as uuid } from 'uuid';
+import { LogMiddleware } from 'src/common/middleware/log.middleware';
 
 // TypeOrmModule.forFeature([PostsModel]) 에서 forFeature() 메서드는
 // forRoot() 메서드와는 다르게 모델에 해당하는 repository를 주입할 때 사용.
@@ -63,3 +71,13 @@ import { v4 as uuid } from 'uuid';
   providers: [PostsService],
 })
 export class PostsModule {}
+
+// middleware 쓸 때 모듈에다 middleware 적용하는 방법.
+/** middleware는 해당 모듈에다가 적용.
+ * 근데 이렇게 path 에다가 * 를 적용할 빠엔 app.module에 middleware 선언해주고 전역으로 적용하는게 나음.
+ */
+// export class PostsModule implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer.apply(LogMiddleware).forRoutes({ path: 'posts *', method: RequestMethod.ALL });
+//   }
+// }

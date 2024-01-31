@@ -1,4 +1,10 @@
-import { ClassSerializerInterceptor, Module } from '@nestjs/common';
+import {
+  ClassSerializerInterceptor,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
@@ -18,6 +24,10 @@ import {
 } from './common/const/env-keys.const';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
+import { LogMiddleware } from './common/middleware/log.middleware';
+import { ChatsModule } from './chats/chats.module';
+import { ChatsModel } from './chats/entity/chat.entity';
+import { MessagesModel } from './chats/messages/entity/messages.entity';
 
 // 다른 모듈을 불러올 때 imports 배열에 등록시킴.
 @Module({
@@ -39,13 +49,14 @@ import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
       username: process.env[ENV_DB_USERNAME_KEY],
       password: process.env[ENV_DB_PASSWORD_KEY],
       database: process.env[ENV_DB_DATABASE_KEY],
-      entities: [PostsModel, UsersModel],
+      entities: [PostsModel, UsersModel, ChatsModel, MessagesModel],
       // synchronize: true -> nestJS에서 작성하는 typeORM코드와 db싱크를 자동으로 맞추겠다!
       // 개발환경에서는 synchronize: true, 프로덕션 환경에서는 synchronize: false
       synchronize: true,
     }),
     UsersModule,
     AuthModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -60,4 +71,11 @@ import { PUBLIC_FOLDER_PATH } from './common/const/path.const';
     },
   ],
 })
-export class AppModule {}
+/** LogMiddleware를 이 서버 전역으로 적용 */
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LogMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

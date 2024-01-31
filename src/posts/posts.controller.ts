@@ -39,7 +39,7 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
-  @UseInterceptors(LogInterceptor)
+  // @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
   }
@@ -53,7 +53,7 @@ export class PostsController {
   }
 
   @Get(':id')
-  @UseInterceptors(LogInterceptor)
+  // @UseInterceptors(LogInterceptor)
   getPost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.getPostById(id);
   }
@@ -61,7 +61,7 @@ export class PostsController {
   @Post()
   @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('image'))
-  @UseInterceptors(LogInterceptor)
+  // @UseInterceptors(LogInterceptor)
   @UseInterceptors(ImagesTransformInterceptor)
   createPost(
     @User() user: UsersModel,
@@ -80,7 +80,7 @@ export class PostsController {
 
   //
   @Patch(':id')
-  @UseInterceptors(LogInterceptor)
+  // @UseInterceptors(LogInterceptor)
   updatePost(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDto,
