@@ -9,7 +9,7 @@ import {
 import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostsModel } from './entities/posts.entity';
+import { PostsModel } from './entity/posts.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
@@ -19,6 +19,7 @@ import * as multer from 'multer';
 import { POST_IMAGE_PATH } from 'src/common/const/path.const';
 import { v4 as uuid } from 'uuid';
 import { LogMiddleware } from 'src/common/middleware/log.middleware';
+import { CommentsModule } from './comments/comments.module';
 
 // TypeOrmModule.forFeature([PostsModel]) 에서 forFeature() 메서드는
 // forRoot() 메서드와는 다르게 모델에 해당하는 repository를 주입할 때 사용.
@@ -69,6 +70,7 @@ import { LogMiddleware } from 'src/common/middleware/log.middleware';
   ],
   controllers: [PostsController],
   providers: [PostsService],
+  exports: [PostsService],
 })
 export class PostsModule {}
 

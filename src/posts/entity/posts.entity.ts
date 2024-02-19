@@ -3,9 +3,10 @@ import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
 import { join } from 'path';
 import { POST_PUBLIC_IMAGE_PATH } from 'src/common/const/path.const';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { UsersModel } from 'src/users/entities/users.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { CommentsModel } from '../comments/entity/comments.entity';
 
 // @Entity() 데코레이터 의미
 // -> @Entity() 선언해주면 PostModel이라는 클래스 이름을 기반으로 자동으로 PostSQL DB에다가 테이블을 생성함.
@@ -40,4 +41,7 @@ export class PostsModel extends BaseModel {
 
   @Column()
   commentCount: number;
+
+  @OneToMany(() => CommentsModel, (comment) => comment.post)
+  comments: CommentsModel[];
 }

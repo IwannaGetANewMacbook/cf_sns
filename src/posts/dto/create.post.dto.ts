@@ -1,5 +1,5 @@
 import { PickType } from '@nestjs/mapped-types';
-import { PostsModel } from '../entities/posts.entity';
+import { PostsModel } from '../entity/posts.entity';
 
 /**
  * TypeScript utility

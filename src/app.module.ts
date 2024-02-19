@@ -9,11 +9,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PostsModel } from './posts/entities/posts.entity';
+import { PostsModel } from './posts/entity/posts.entity';
 import { UsersModule } from './users/users.module';
-import { UsersModel } from './users/entities/users.entity';
+import { UsersModel } from './users/entity/users.entity';
 import { AuthModule } from './auth/auth.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import {
   ENV_DB_DATABASE_KEY,
@@ -28,11 +28,14 @@ import { LogMiddleware } from './common/middleware/log.middleware';
 import { ChatsModule } from './chats/chats.module';
 import { ChatsModel } from './chats/entity/chat.entity';
 import { MessagesModel } from './chats/messages/entity/messages.entity';
+import { CommentsModel } from './posts/comments/entity/comments.entity';
+import { CommentsModule } from './posts/comments/comments.module';
+import { RolesGuard } from './users/guard/roles.guard';
+import { AccessTokenGuard } from './auth/guard/bearer-token.guard';
 
 // 다른 모듈을 불러올 때 imports 배열에 등록시킴.
 @Module({
   imports: [
-    PostsModule,
     ServeStaticModule.forRoot({
       // 파일들을 serving할 가장 최상단의 폴더(절대 경로)
       rootPath: PUBLIC_FOLDER_PATH, // => http://localhost:3000/posts/dwd.jpg
@@ -49,14 +52,22 @@ import { MessagesModel } from './chats/messages/entity/messages.entity';
       username: process.env[ENV_DB_USERNAME_KEY],
       password: process.env[ENV_DB_PASSWORD_KEY],
       database: process.env[ENV_DB_DATABASE_KEY],
-      entities: [PostsModel, UsersModel, ChatsModel, MessagesModel],
+      entities: [
+        PostsModel,
+        UsersModel,
+        ChatsModel,
+        MessagesModel,
+        CommentsModel,
+      ],
       // synchronize: true -> nestJS에서 작성하는 typeORM코드와 db싱크를 자동으로 맞추겠다!
       // 개발환경에서는 synchronize: true, 프로덕션 환경에서는 synchronize: false
       synchronize: true,
     }),
+    PostsModule,
     UsersModule,
     AuthModule,
     ChatsModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -68,6 +79,16 @@ import { MessagesModel } from './chats/messages/entity/messages.entity';
        */
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor, // 어떤 클래스를 적용할지.
+    },
+    // app 전체에다가 guard 등록함.
+    {
+      // app안에 있는 API 전체에다가 토큰가드 씌어서 privateAPI로 만들어버림.
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

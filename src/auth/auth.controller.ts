@@ -3,12 +3,14 @@ import { AuthService } from './auth.service';
 import { BasicTokenGuard } from './guard/basic-token.guard';
 import { RefreshTokenGuard } from './guard/bearer-token.guard';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('token/access')
+  @IsPublic()
   @UseGuards(RefreshTokenGuard)
   createTokenAccess(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
@@ -22,6 +24,7 @@ export class AuthController {
   }
 
   @Post('token/refresh')
+  @IsPublic()
   @UseGuards(RefreshTokenGuard)
   createTokenRefresh(@Headers('authorization') rawToken: string) {
     const token = this.authService.extractTokenFromHeader(rawToken, true);
@@ -36,6 +39,7 @@ export class AuthController {
 
   // 로그인 end point
   @Post('login/email')
+  @IsPublic()
   @UseGuards(BasicTokenGuard)
   loginWithEmail(@Headers('authorization') rawToken: string) {
     // email:password -> base64로 encoding
@@ -50,6 +54,7 @@ export class AuthController {
 
   // 회원가입 end point
   @Post('register/email')
+  @IsPublic()
   registerWithEmail(@Body() body: RegisterUserDto) {
     const { nickname, email, password } = body;
     return this.authService.registerWithEmail({ nickname, email, password });

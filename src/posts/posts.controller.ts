@@ -20,7 +20,7 @@ import {
 import { PostsService } from './posts.service';
 import { AccessTokenGuard } from 'src/auth/guard/bearer-token.guard';
 import { User } from 'src/users/decorator/user.decorator';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { CreatePostDTO } from './dto/create.post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PaginatePostDto } from './dto/paginate-post.dto';
@@ -33,12 +33,16 @@ import {
 import { LogInterceptor } from 'src/common/interceptor/log.interceptor';
 import { ImagesTransformInterceptor } from './interceptor/images-transform.interceptor';
 import { HttpExceptionFilter } from 'src/common/exception-filter/http.exception-filter';
+import { Roles } from 'src/users/decorator/roles.decorator';
+import { RolesEnum } from 'src/users/const/roles.const';
+import { IsPublic } from 'src/common/decorator/is-public.decorator';
 
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get()
+  @IsPublic()
   // @UseInterceptors(LogInterceptor)
   getPosts(@Query() query: PaginatePostDto) {
     return this.postsService.paginatePosts(query);
@@ -46,20 +50,19 @@ export class PostsController {
 
   // 테스트용 임의 API
   @Post('random')
-  @UseGuards(AccessTokenGuard)
   async postPostsRandom(@User() user: UsersModel) {
     await this.postsService.generatePosts(user.id);
     return true;
   }
 
   @Get(':id')
+  @IsPublic()
   // @UseInterceptors(LogInterceptor)
   getPost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.getPostById(id);
   }
 
   @Post()
-  @UseGuards(AccessTokenGuard)
   @UseInterceptors(FilesInterceptor('image'))
   // @UseInterceptors(LogInterceptor)
   @UseInterceptors(ImagesTransformInterceptor)
@@ -91,6 +94,7 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @Roles(RolesEnum.ADMIN)
   deletePost(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);
   }

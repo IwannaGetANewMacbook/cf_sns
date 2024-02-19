@@ -1,7 +1,7 @@
 import { CommonService } from './../common/common.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
-import { PostsModel } from './entities/posts.entity';
+import { PostsModel } from './entity/posts.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginatePostDto } from './dto/paginate-post.dto';
 import { ConfigService } from '@nestjs/config';
@@ -216,5 +216,11 @@ export class PostsService {
     await this.postsRepository.delete(id);
 
     return `The id of deleted post is ${id}`;
+  }
+
+  checkPostExistsById(postId: number) {
+    return this.postsRepository.exist({
+      where: { id: postId },
+    });
   }
 }

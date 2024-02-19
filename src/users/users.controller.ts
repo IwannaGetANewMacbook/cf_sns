@@ -1,5 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { Roles } from './decorator/roles.decorator';
+import { RolesEnum } from './const/roles.const';
 
 @Controller('users')
 export class UsersController {
@@ -11,6 +13,7 @@ export class UsersController {
    *                           다른 시스템에서도 쉽게 사용할 수 있는 포맷으로 변환
    *                         -> class의 object에서 JSON 포맷으로 변환.
    */
+  @Roles(RolesEnum.ADMIN)
   getAllUsers() {
     return this.usersService.getAllUsers();
   }

@@ -26,7 +26,7 @@ import {
 } from '@nestjs/common';
 import { SocketCatchHttpExceptionFilter } from 'src/common/exception-filter/socket-catch-http.exception-filter';
 import { SocketBearerTokenGuard } from 'src/auth/guard/socket/socket-bearer-token.guard';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthService } from 'src/auth/auth.service';
 
@@ -70,7 +70,7 @@ export class ChatsGateway
   @WebSocketServer()
   server: Server;
 
-  // OnGatewayInit implements 시 사용할 수 있는 함수 - gateway가 초기화 되었을 때 실행.
+  // OnGatewayInit implements 시 사용할 수 있는 함수 - gateway가 시작되었을 때 특정함수나 로직을 실행하고 싶을 때 사용.
   afterInit(server: Server) {
     console.log(`after gateway init`);
   }
@@ -82,6 +82,7 @@ export class ChatsGateway
 
   // handleConnection() 함수는 소켓이 연결되었을 때 실행된다. (OnGatewayConnection Implements 시 사용가능한 함수.)
   // (쌩 socket.io 코드의 io.on("connection", () => {})  에 해당.)
+  // handleConnection() 함수 안에서 사용자 정보를 입력해주면 소켓이 연결되어있는 동안은 사용자 그 소켓의 사용자 정보가 쭉 지속됨.
   async handleConnection(socket: Socket & { user: UsersModel }) {
     console.log(`on connect called : ${socket.id}`);
 

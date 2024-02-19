@@ -7,17 +7,31 @@ import {
 } from '@nestjs/common';
 
 import { AuthService } from '../auth.service';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from 'src/common/decorator/is-public.decorator';
 
 @Injectable()
 export class BearerTokenGuard implements CanActivate {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly reflector: Reflector,
   ) {}
 
   /** implements한 CanActivate 클래스의 canActivate 함수 오버라이드. */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // public annotation인지 아닌지 검증, public route면 바로 true 반환해서 가드를 패스시킴.
+    const isPublic = this.reflector.getAllAndOverride(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     const req = context.switchToHttp().getRequest();
+
+    if (isPublic) {
+      req.isRoutePublic = true;
+      return true;
+    }
 
     const rawToken = req.headers['authorization'];
     if (!rawToken) {
@@ -54,6 +68,10 @@ export class AccessTokenGuard extends BearerTokenGuard {
 
     const req = context.switchToHttp().getRequest();
 
+    if (req.isRoutePublic) {
+      return true;
+    }
+
     if (req.tokenType !== 'access') {
       throw new UnauthorizedException('401 Not Access Token');
     }
@@ -68,6 +86,10 @@ export class RefreshTokenGuard extends BearerTokenGuard {
     await super.canActivate(context);
 
     const req = context.switchToHttp().getRequest();
+
+    if (req.isRoutePublic) {
+      return true;
+    }
 
     if (req.tokenType !== 'refresh') {
       throw new UnauthorizedException('401 Not Refresh Token');

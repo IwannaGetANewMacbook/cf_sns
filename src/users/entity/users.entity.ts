@@ -2,14 +2,15 @@
  * enum: 특정한 값들이 지정되어 있고 이 값들만 존재할 수 있다고 했을 때 유용함.
  */
 
-import { PostsModel } from 'src/posts/entities/posts.entity';
+import { PostsModel } from 'src/posts/entity/posts.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { RolesEnum } from '../const/roles.const';
-import { BaseModel } from 'src/common/entities/base.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
 import { IsEmail, IsString, Length } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { ChatsModel } from 'src/chats/entity/chat.entity';
 import { MessagesModel } from 'src/chats/messages/entity/messages.entity';
+import { CommentsModel } from 'src/posts/comments/entity/comments.entity';
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -61,4 +62,7 @@ export class UsersModel extends BaseModel {
 
   @OneToMany(() => MessagesModel, (message) => message.author)
   messages: MessagesModel;
+
+  @OneToMany(() => CommentsModel, (comment) => comment.author)
+  postComments: CommentsModel[];
 }

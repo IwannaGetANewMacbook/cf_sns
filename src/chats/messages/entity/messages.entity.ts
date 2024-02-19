@@ -1,7 +1,7 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { ChatsModel } from 'src/chats/entity/chat.entity';
-import { BaseModel } from 'src/common/entities/base.entity';
-import { UsersModel } from 'src/users/entities/users.entity';
+import { BaseModel } from 'src/common/entity/base.entity';
+import { UsersModel } from 'src/users/entity/users.entity';
 import { IsString } from 'class-validator';
 
 @Entity()
