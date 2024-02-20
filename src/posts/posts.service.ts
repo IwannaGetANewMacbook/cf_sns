@@ -223,4 +223,12 @@ export class PostsService {
       where: { id: postId },
     });
   }
+
+  // 자기자신의 포스트인지 아닌지 확인하는 API
+  async isPostMine(userId: number, postId: number) {
+    return this.postsRepository.exist({
+      where: { id: postId, author: { id: userId } },
+      relations: { author: true },
+    });
+  }
 }
