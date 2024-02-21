@@ -1,13 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { UsersModel } from './entity/users.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserFollowersModel } from './entity/user-followers.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UsersModel)
     private readonly usersRepository: Repository<UsersModel>,
+    @InjectRepository(UserFollowersModel)
+    private readonly userFollowersRepository: Repository<UserFollowersModel>,
   ) {}
 
   async createUser(user: Pick<UsersModel, 'email' | 'nickname' | 'password'>) {
@@ -51,5 +55,62 @@ export class UsersService {
 
   async getUserByEmail(email: string) {
     return this.usersRepository.findOne({ where: { email: email } });
+  }
+
+  // follow sysyem logic.
+  async followUser(userId: number, followingId: number) {
+    const result = await this.userFollowersRepository.save({
+      follower: { id: userId },
+      following: { id: followingId },
+    });
+    return true;
+  }
+
+  // follower 가져오기
+  async getFollowers(userId: number, includeNotConfirmed: boolean) {
+    const where = { following: { id: userId } };
+
+    if (!includeNotConfirmed) {
+      where['isConfirmed'] = true;
+    }
+
+    const result = await this.userFollowersRepository.find({
+      where,
+      relations: { follower: true, following: true },
+    });
+
+    return result.map((v) => ({
+      id: v.follower.id,
+      nickname: v.follower.nickname,
+      email: v.follower.email,
+      isConfirmed: v.isConfirmed,
+    }));
+  }
+
+  async confirmFollow(followerId: number, followingId: number) {
+    const exisisting = await this.userFollowersRepository.findOne({
+      where: { follower: { id: followerId }, following: { id: followingId } },
+      relations: { follower: true, following: true },
+    });
+
+    if (!exisisting) {
+      throw new BadRequestException('존재하지 않는 팔로우 요청입니다.');
+    }
+
+    await this.userFollowersRepository.save({
+      ...exisisting,
+      isConfirmed: true,
+    });
+
+    return true;
+  }
+
+  async deleteFollow(userId: number, followingId: number) {
+    await this.userFollowersRepository.delete({
+      follower: { id: userId },
+      following: { id: followingId },
+    });
+
+    return true;
   }
 }

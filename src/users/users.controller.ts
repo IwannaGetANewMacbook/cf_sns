@@ -1,7 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Roles } from './decorator/roles.decorator';
 import { RolesEnum } from './const/roles.const';
+import { UsersModel } from './entity/users.entity';
+import { User } from './decorator/user.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -18,12 +31,41 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
-  // @Post()
-  // createUser(
-  //   @Body('nickname') nickname: string,
-  //   @Body('email') email: string,
-  //   @Body('password') password: string,
-  // ) {
-  //   return this.usersService.createUser({ nickname, email, password });
-  // }
+  @Get('follow/me')
+  async getFollow(
+    @User() user: UsersModel,
+    @Query('includeNotConfirmed', new DefaultValuePipe(false), ParseBoolPipe)
+    includeNotConfirmed: boolean,
+  ) {
+    return this.usersService.getFollowers(user.id, includeNotConfirmed);
+  }
+
+  @Post('follow/:id')
+  async postFollow(
+    @User() user: UsersModel,
+    @Param('id', ParseIntPipe) followingId: number,
+  ) {
+    await this.usersService.followUser(user.id, followingId);
+    return true;
+  }
+
+  @Patch('follow/:id/confirm') // :id -> 나를 팔로우 요청한 상대의 ID
+  async patchFollowConfirm(
+    @User() user: UsersModel,
+    @Param('id', ParseIntPipe) followerId: number,
+  ) {
+    await this.usersService.confirmFollow(followerId, user.id);
+
+    return true;
+  }
+
+  @Delete('follow/:id')
+  async deleteFollow(
+    @User() user: UsersModel,
+    @Param('id', ParseIntPipe) followingId: number,
+  ) {
+    await this.usersService.deleteFollow(user.id, followingId);
+
+    return true;
+  }
 }
