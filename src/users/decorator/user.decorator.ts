@@ -18,7 +18,7 @@ export const User = createParamDecorator((data, context: ExecutionContext) => {
    */
   if (!user) {
     throw new InternalServerErrorException(
-      'there is not user properties in Request... Pleas make sure to use it with AccessTokenGuard',
+      'there is not user properties in Request... Pleas make sure to use this decorator with AccessTokenGuard',
     );
   }
 
