@@ -16,10 +16,7 @@ async function bootstrap() {
         // class-validator Anotation에 적용된 타입으로 class-transformer가 자동으로 해당 property 타입을 변환해줌.
         enableImplicitConversion: true,
       },
-      /**
-       * 이 옵션이 true가 되면은 validator가 지금 현재 validation이 적용되지
-       * 않은 모든 property들을 삭제할것.
-       */
+      // whitelist 옵션이 true가 되면은 validator가 지금 현재 validation이 적용되지 않은 모든 property들을 삭제할것.
       whitelist: true,
       /** whitelist가 true일 경우 stripping을 하는 대신 error를 던짐. */
       forbidNonWhitelisted: true,

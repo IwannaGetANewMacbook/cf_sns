@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { CommonService } from './../common/common.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FindOptionsWhere, LessThan, MoreThan, Repository } from 'typeorm';
@@ -49,81 +50,81 @@ export class PostsService {
     );
   }
 
-  async pagePaginatePosts(dto: PaginatePostDto) {
-    /** 리턴값.
-     * data: Data[],
-     * total: number, // 전체 데이터 는 몇개가 되는지.
-     */
-    const [posts, count] = await this.postsRepository.findAndCount({
-      skip: dto.take * (dto.page - 1),
-      take: dto.take,
-      order: { createdAt: dto.order__createdAt },
-    });
+  // async pagePaginatePosts(dto: PaginatePostDto) {
+  //   /** 리턴값.
+  //    * data: Data[],
+  //    * total: number, // 전체 데이터 는 몇개가 되는지.
+  //    */
+  //   const [posts, count] = await this.postsRepository.findAndCount({
+  //     skip: dto.take * (dto.page - 1),
+  //     take: dto.take,
+  //     order: { createdAt: dto.order__createdAt },
+  //   });
 
-    return {
-      data: posts,
-      total: count,
-    };
-  }
+  //   return {
+  //     data: posts,
+  //     total: count,
+  //   };
+  // }
 
-  async cursorPaginatePosts(dto: PaginatePostDto) {
-    const where: FindOptionsWhere<PostsModel> = {};
+  // async cursorPaginatePosts(dto: PaginatePostDto) {
+  //   const where: FindOptionsWhere<PostsModel> = {};
 
-    if (dto.where__id__less_than) {
-      where.id = LessThan(dto.where__id__less_than);
-    } else if (dto.where__id__more_than) {
-      where.id = MoreThan(dto.where__id__more_than);
-    }
+  //   if (dto.where__id__less_than) {
+  //     where.id = LessThan(dto.where__id__less_than);
+  //   } else if (dto.where__id__more_than) {
+  //     where.id = MoreThan(dto.where__id__more_than);
+  //   }
 
-    const posts = await this.postsRepository.find({
-      where,
-      order: { createdAt: dto.order__createdAt },
-      take: dto.take,
-    });
+  //   const posts = await this.postsRepository.find({
+  //     where,
+  //     order: { createdAt: dto.order__createdAt },
+  //     take: dto.take,
+  //   });
 
-    // 해당되는 포스트가 0개 이상이면 마지막 포스트를 가져오고 아니면 null을 반환.
-    const lastItem =
-      posts.length > 0 && posts.length === dto.take
-        ? posts[posts.length - 1]
-        : null;
+  //   // 해당되는 포스트가 0개 이상이면 마지막 포스트를 가져오고 아니면 null을 반환.
+  //   const lastItem =
+  //     posts.length > 0 && posts.length === dto.take
+  //       ? posts[posts.length - 1]
+  //       : null;
 
-    const protocol = this.configService.get<string>(ENV_PROTOCOL_KEY);
-    const host = this.configService.get<string>(ENV_HOST_KEY);
+  //   const protocol = this.configService.get<string>(ENV_PROTOCOL_KEY);
+  //   const host = this.configService.get<string>(ENV_HOST_KEY);
 
-    // next에 해당하는 url만들기.
-    const nextUrl = lastItem && new URL(`${protocol}://${host}/posts`);
-    if (nextUrl) {
-      for (const key of Object.keys(dto)) {
-        if (dto[key]) {
-          if (
-            key !== 'where__id__more_than' &&
-            key !== 'where__id__less_than'
-          ) {
-            nextUrl.searchParams.append(key, dto[key]);
-          }
-        }
-      }
+  //   // next에 해당하는 url만들기.
+  //   const nextUrl = lastItem && new URL(`${protocol}://${host}/posts`);
+  //   if (nextUrl) {
+  //     for (const key of Object.keys(dto)) {
+  //       if (dto[key]) {
+  //         if (
+  //           key !== 'where__id__more_than' &&
+  //           key !== 'where__id__less_than'
+  //         ) {
+  //           nextUrl.searchParams.append(key, dto[key]);
+  //         }
+  //       }
+  //     }
 
-      let key = null;
+  //     let key = null;
 
-      if (dto.order__createdAt === 'ASC') {
-        key = 'where__id__more_than';
-      } else {
-        key = 'where__id__less_than';
-      }
+  //     if (dto.order__createdAt === 'ASC') {
+  //       key = 'where__id__more_than';
+  //     } else {
+  //       key = 'where__id__less_than';
+  //     }
 
-      nextUrl.searchParams.append(key, lastItem.id.toString());
-    }
+  //     nextUrl.searchParams.append(key, lastItem.id.toString());
+  //   }
 
-    return {
-      data: posts,
-      cursor: {
-        after: lastItem?.id ?? null, // 여기서 ? 붙여서 lastItem이 null 일 경우 null값을 고대로 넣어줌.
-      },
-      count: posts.length,
-      next: nextUrl?.toString() ?? null,
-    };
-  }
+  //   return {
+  //     data: posts,
+  //     cursor: {
+  //       after: lastItem?.id ?? null, // 여기서 ? 붙여서 lastItem이 null 일 경우 null값을 고대로 넣어줌.
+  //     },
+  //     count: posts.length,
+  //     next: nextUrl?.toString() ?? null,
+  //   };
+  // }
 
   async getPostById(id: number) {
     const post = await this.postsRepository.findOne({

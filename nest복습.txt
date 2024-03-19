@@ -134,3 +134,48 @@ YAGNI: You Ain't Gonna Need It - 필요한 작업만!
 DRY: Don't Repeat Yourself - 동일한 코드를 반복하지 마라!
 
 
+---------------------------------------------------------3/12----------------------------------------------------------------------
+<Postman 환경변수>
+Initisl value = 팀 끼리 공유할 때 공유되는 값.
+Current value = Initisl value 를 로컬에서만 override 할 수 있는 기능.
+
+<TypeScript utility>
+Pick, Omit, Partial -> Type을 반환 (extends 안됨)
+PickType, OmitType, PartialType -> 값을 반환 (extends 가능)
+
+<Exclude Anotation Options>
+Request
+frontend -> backend 데이터 전송 시에는,
+plain object (JSON) -> class instance (dto) 로 변환됨.
+Response
+backend -> frontend 데이터 전송 시에는,
+class instance (dto) -> plain object (JSON) 로 변환.
+toClassOnly -> class instance 변환될때만(즉, 요청을 보낼때만 적용)
+toPlainOnly -> plain object로 변환될때만(즉, 응답을 보낼때만 적용)
+@Exclude() 애노태이션을 옵션없이 사용하면 toClassOnly, toPlainOnly 모두 적용됨.
+request에서는 password를 제외시키지 말아야 하고 response에서만 제외시키고 싶음.
+
+---------------------------------------------------------3/15----------------------------------------------------------------------
+<Pagination>
+- Pagination 이란 많은 데이터를 부분적으로 나눠서 불러오는 기술.
+
+<Pagination 특징>
+- 쿼리에 해당되는 모든 데이터를 한번에 다 불러오지 않고 부분적으로 쪼개서 불러옴. (e.g. 한번에 20개씩)
+- 쿠팡같은 앱의 경우 수억개의 상품이 데이터베이스에 저장되어 있는데 사용자가 상품검색 화면을 들어갈때마다 모든 상품정보를 서버에서 클라이언트로 전송할 필요 없음.
+- 현대 클라우드 시스템은 데이터 전송에 돈이 든다.
+- 돈이 안들더라도 수억개의 데이터를 한번에 보내면 분명 메모리가 터질것이다.
+- 메모리가 터지지 않더라도 데이터 전송에 상당히 오랜 시간이 걸릴 것이다.
+
+<Page Based Pagination>
+- 페이지 기준으로 데이터를 잘라서 요청하는 Pagination.
+- 요청을 보낼때 원하는 데이터 갯수와 몇번째 페이지를 가져올지 명시.
+- 페이지 숫자를 누르면 다음 페이지로 넘어가는 형태의 UI에서 많이 사용.
+- Pagination 도중 데이터베이스에서 데이터가 추가되거나 삭제될경우 데이터가 누락되거나 중복될 수 있음.
+- Pagination 알고리즘이 매우 간단함.
+
+<Cursor Based Pagination>
+- 가장 최근에 가져온 데이터를 기준으로 다음 데이터를 가져오는 Pagination.
+- 요청을 보낼때 마지막 데이터의 기준값(ID등 Unique값)과 몇개의 데이터를 가져올지 명시.
+- 스크롤 형태의 리스트에서 자주 사용(e.g. 앱의 ListView)
+- 최근 데이터의 기준값을 기반으로 쿼리가 작성되기때문에 데이터가 누락되거나 중복될 확률이 적음.
+

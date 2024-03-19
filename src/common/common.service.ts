@@ -21,9 +21,11 @@ export class CommonService {
     overrideFindOptions: FindManyOptions<T> = {},
     path: string,
   ) {
+    // page기반 pagination
     if (dto.page) {
       return this.pagePaginate(dto, repository, overrideFindOptions);
     } else {
+      // cursor기반 pagination
       return this.cursorPaginate(dto, repository, overrideFindOptions, path);
     }
   }
@@ -68,7 +70,7 @@ export class CommonService {
     const host = this.configService.get<string>(ENV_HOST_KEY);
 
     // next에 해당하는 url만들기.
-    const nextUrl = lastItem && new URL(`${protocol}://${host}/${path}}`);
+    const nextUrl = lastItem && new URL(`${protocol}://${host}/${path}`);
     if (nextUrl) {
       for (const key of Object.keys(dto)) {
         if (dto[key]) {
@@ -123,8 +125,7 @@ export class CommonService {
      *
      * 1) where로 시작한다면 필터 로직을 적용한다
      * 2) order로 시작하면 정렬 로직을 적용한다.
-     * 3) 필터 로직을 적용한다면 '__' 기준으로 split 했을때 3개의 값으로 나뉘는지
-     *    2개의 값으로 나뉘는지 확인한다.
+     * 3) 필터 로직을 적용한다면 '__' 기준으로 split 했을때 3개의 값으로 나뉘는지 2개의 값으로 나뉘는지 확인한다.
      *    3-1) 3개의 값으로 나뉜다면 FILTER_MAPPER에서 해당되는 operator 함수를 찾아서 적용한다.
      *            e.g. where__id__more_than ---> ['where', 'id', 'more_than']
      *    3-2) 2개의 값으로 나뉜다면 정확한 값을 필터하는 것이기 때문에 operator 없이 작용한다.
@@ -136,12 +137,15 @@ export class CommonService {
     let where: FindOptionsWhere<T> = {};
     let order: FindOptionsOrder<T> = {};
 
+    // dto의 key값과 value값을 리스트로 뽑아서 looping함.
     for (const [key, value] of Object.entries(dto)) {
+      // key가 'where__'로 시작하는 경우
       if (key.startsWith('where__')) {
         where = {
           ...where,
           ...this.parseWhereFilter(key, value),
         };
+        // key가 'order__'로 시작하는 경우
       } else if (key.startsWith('order__')) {
         order = {
           ...order,
@@ -186,6 +190,9 @@ export class CommonService {
       // FILTER_MAPPER[operator] -> MoreThan(from TypeORM)
       if (operator === 'i_like') {
         where[field] = FILTER_MAPPER[operator](`%${value}%`);
+      } else if (operator === 'between') {
+        const values = value.toString().split(',');
+        where[field] = FILTER_MAPPER[operator](values[0], values[1]);
       } else {
         where[field] = FILTER_MAPPER[operator](value);
       }
