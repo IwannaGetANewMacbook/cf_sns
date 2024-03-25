@@ -145,7 +145,7 @@ export class PostsService {
     authorId: number,
     title: string,
     content: string,
-    images: Array<Express.Multer.File>,
+    images?: Array<Express.Multer.File>,
   ) {
     // 1) create -> 저장할 객체를 생성한다.
     // 2) save -> 객체를 저장한다.(create 메서드에서 생성한 객체로 저장)
