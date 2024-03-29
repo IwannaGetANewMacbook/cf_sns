@@ -21,7 +21,7 @@ export class LogInterceptor implements NestInterceptor {
      */
     const req = context.switchToHttp().getRequest();
 
-    // e.g. /posts     /common/image etc.
+    // e.g. /posts,     /common/image etc.
     const path = req.originalUrl;
 
     // 현재 날짜와 시간 가져오기.
