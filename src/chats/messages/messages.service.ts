@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MessagesModel } from './entity/messages.entity';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CommonService } from 'src/common/common.service';
-import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
 import { createMessagesDto } from './dto/create-messages.dto';
+import { PaginateMassagesDto } from './dto/pagenate-messages.dto';
 
 @Injectable()
 export class ChatsMessagesService {
@@ -27,7 +27,7 @@ export class ChatsMessagesService {
   }
 
   paginateMessages(
-    dto: BasePaginationDto,
+    dto: PaginateMassagesDto,
     overrideFindOptions: FindManyOptions<MessagesModel>,
   ) {
     return this.commonService.paginate(

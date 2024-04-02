@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ChatsMessagesService } from './messages.service';
-import { BasePaginationDto } from 'src/common/dto/base-pagination.dto';
+import { PaginateMassagesDto } from './dto/pagenate-messages.dto';
 
 @Controller('chats/:cid/messages')
 export class MessagesController {
@@ -9,7 +9,7 @@ export class MessagesController {
   @Get()
   paginateMessage(
     @Param('cid', ParseIntPipe) id: number,
-    @Query() dto: BasePaginationDto,
+    @Query() dto: PaginateMassagesDto,
   ) {
     return this.chatsMessagesService.paginateMessages(dto, {
       where: { chat: { id: id } },
