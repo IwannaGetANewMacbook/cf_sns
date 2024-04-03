@@ -76,16 +76,14 @@ export class ChatsGateway
   }
 
   // OnGatewayDisconnect implements 시 사용할 수 있는 함수 - 소켓의 연결이 끊어졌을 때 실행.
-  handleDisconnect(socket: Socket) {
-    console.log(`on disconnect called : ${socket.id}`);
+  handleDisconnect(socket: Socket & { user: UsersModel }) {
+    console.log(`on disconnect called : ${socket.user.email}`);
   }
 
   // handleConnection() 함수는 소켓이 연결되었을 때 실행된다. (OnGatewayConnection Implements 시 사용가능한 함수.)
   // (쌩 socket.io 코드의 io.on("connection", () => {})  에 해당.)
   // handleConnection() 함수 안에서 사용자 정보를 입력해주면 소켓이 연결되어있는 동안은 사용자 그 소켓의 사용자 정보가 쭉 지속됨.
   async handleConnection(socket: Socket & { user: UsersModel }) {
-    console.log(`on connect called : ${socket.id}`);
-
     // req헤더 가져오기
     const header = socket.handshake.headers;
 
@@ -108,6 +106,7 @@ export class ChatsGateway
       // 연결된 socket에 user객체 달아주기
       socket.user = user;
 
+      console.log(`on connect called : ${socket.user.email}`);
       // canActivate() 함수 리턴값은 boolean
       return true;
     } catch (e) {
