@@ -56,7 +56,7 @@ export class CommentsController {
   }
 
   @Post()
-  //어떤 포스트에다가 코멘트를 달았는지 필요하니까 pid받음
+  //어떤 포스트에다가 코멘트를 달건지 필요하니까 pid받음
   postComment(
     @Param('postId', ParseIntPipe) postId: number,
     @Body() dto: CreateCommentsDto,

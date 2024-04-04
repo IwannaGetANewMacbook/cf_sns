@@ -62,7 +62,7 @@ export class CommentsService {
     });
 
     if (!comment) {
-      throw new BadRequestException('this is not existant');
+      throw new BadRequestException('this is not a existant comment');
     }
 
     const prevComment = await this.commentsRepository.preload({
@@ -82,7 +82,7 @@ export class CommentsService {
     });
 
     if (!comment) {
-      throw new BadRequestException('this is not existant');
+      throw new BadRequestException('this is not a existant comment');
     }
 
     await this.commentsRepository.delete({ id: commentId });
