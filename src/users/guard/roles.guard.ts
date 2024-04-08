@@ -8,6 +8,13 @@ import {
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorator/roles.decorator';
 
+/**
+ * 메타데이터를 등록하는 기능 하나 만들고 메타데이터를 읽어내가지고 이 데이터로 원하는 작업을 실행하는 로직을 만들어야함.
+ * 1. 메타데이터를 등록하는 기능 하나 만들어야 함.
+ * 2. 메타데이터를 등록하는 기능은 roles.decorator.ts 파일에 정의.
+ * 3. 메타데이러를 등록하는 기능을 만들면, 메타데이러르 읽어내가지고 이 데이터로 원하는 작업을 실행하는 로직을 만들어야 함.
+ * 4. 원하는 작업을 실행하는 로직이 roles.guard.ts 임.
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
@@ -16,9 +23,12 @@ export class RolesGuard implements CanActivate {
      * Roles annotation에 대한 metadata를 가져와야 함.
      *
      * Reflector 안에 있는 getAllAndOverride() 메소드 사용.
+     * getAllAndOverride(ROLES_KEY) -> means, ROLES_KEY가 적용되어있는 모든 애노테이션중 API와 가장 가까운 애노테이션의 정보를 가져와서 override 해줌.
+     * 여기서는 @Role() 데코레이터
      * 전부 외우는 코드.
      */
     const requiredRole = this.reflector.getAllAndOverride(ROLES_KEY, [
+      //ROLES_KEY값 기준으로 metadata 가져올거.
       context.getHandler(),
       context.getClass(),
     ]);

@@ -29,6 +29,7 @@ export class BearerTokenGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
 
     if (isPublic) {
+      // req 에 isRoutePublic 프로퍼티를 달아주어야 AccessTokenGuard 또는 RefreshTokenGuard 에서 검증을 안함.
       req.isRoutePublic = true;
       return true;
     }

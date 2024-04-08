@@ -5,4 +5,4 @@ import { RolesEnum } from '../const/roles.const';
 export const ROLES_KEY = 'user_roles';
 
 // @Roles(RolesEnum.ADMIN) --> 이렇게 애노테이션 해주면 해당 API는 ADMIM 사용자가 아니면 사용할 수 없게 함.
-export const Roles = (role: RolesEnum) => SetMetadata(ROLES_KEY, role); // metadata를 저장할 key, key값에 해당되는 데이터.
+export const Roles = (role: RolesEnum) => SetMetadata(ROLES_KEY, role); // SetMetadata(metadata를 저장할 key, key값에 해당되는 데이터.)

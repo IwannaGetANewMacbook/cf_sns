@@ -83,6 +83,7 @@ import { UserFollowersModel } from './users/entity/user-followers.entity';
       useClass: ClassSerializerInterceptor, // 어떤 클래스를 적용할지.
     },
     // app 전체에다가 guard 등록함.
+    // 주의!: app 전체에 등록한 guard는 해당API에 등록한 guard 보다 무조건 먼저 실행됨.
     {
       // app안에 있는 API 전체에다가 토큰가드 씌어서 privateAPI로 만들어버림.
       provide: APP_GUARD,
