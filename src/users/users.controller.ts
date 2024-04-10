@@ -43,9 +43,9 @@ export class UsersController {
   @Post('follow/:id')
   async postFollow(
     @User() user: UsersModel,
-    @Param('id', ParseIntPipe) followingId: number,
+    @Param('id', ParseIntPipe) followeeId: number,
   ) {
-    await this.usersService.followUser(user.id, followingId);
+    await this.usersService.followUser(user.id, followeeId);
     return true;
   }
 
@@ -59,12 +59,12 @@ export class UsersController {
     return true;
   }
 
-  @Delete('follow/:id')
+  @Delete('follow/:id') // :id --> 내가 팔로우 취소하고 싶은 상대의 ID
   async deleteFollow(
     @User() user: UsersModel,
-    @Param('id', ParseIntPipe) followingId: number,
+    @Param('id', ParseIntPipe) followeeId: number,
   ) {
-    await this.usersService.deleteFollow(user.id, followingId);
+    await this.usersService.deleteFollow(user.id, followeeId);
 
     return true;
   }

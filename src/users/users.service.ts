@@ -58,25 +58,26 @@ export class UsersService {
   }
 
   // follow sysyem logic.
-  async followUser(userId: number, followingId: number) {
+  async followUser(followerId: number, followeeId: number) {
     const result = await this.userFollowersRepository.save({
-      follower: { id: userId },
-      following: { id: followingId },
+      follower: { id: followerId },
+      followee: { id: followeeId },
     });
     return true;
   }
 
   // follower 가져오기
   async getFollowers(userId: number, includeNotConfirmed: boolean) {
-    const where = { following: { id: userId } };
+    const where = { followee: { id: userId } };
 
+    // confirm 된 follwer만 보고싶을 떄.
     if (!includeNotConfirmed) {
       where['isConfirmed'] = true;
     }
 
     const result = await this.userFollowersRepository.find({
       where,
-      relations: { follower: true, following: true },
+      relations: { follower: true, followee: true },
     });
 
     return result.map((v) => ({
@@ -87,10 +88,10 @@ export class UsersService {
     }));
   }
 
-  async confirmFollow(followerId: number, followingId: number) {
+  async confirmFollow(followerId: number, followeeId: number) {
     const exisisting = await this.userFollowersRepository.findOne({
-      where: { follower: { id: followerId }, following: { id: followingId } },
-      relations: { follower: true, following: true },
+      where: { follower: { id: followerId }, followee: { id: followeeId } },
+      relations: { follower: true, followee: true },
     });
 
     if (!exisisting) {
@@ -105,10 +106,10 @@ export class UsersService {
     return true;
   }
 
-  async deleteFollow(userId: number, followingId: number) {
+  async deleteFollow(followerId: number, followingId: number) {
     await this.userFollowersRepository.delete({
-      follower: { id: userId },
-      following: { id: followingId },
+      follower: { id: followerId },
+      followee: { id: followingId },
     });
 
     return true;

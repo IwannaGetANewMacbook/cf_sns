@@ -71,7 +71,7 @@ export class UsersModel extends BaseModel {
   @OneToMany(() => UserFollowersModel, (ufm) => ufm.follower)
   followers: UserFollowersModel[];
 
-  // 내가 팔로우 하고 있는 사람들
-  @OneToMany(() => UserFollowersModel, (ufm) => ufm.following)
-  followings: UserFollowersModel[];
+  // 팔로우 당하고 있는 사람들(내가 팔로우 하는 사람들)
+  @OneToMany(() => UserFollowersModel, (ufm) => ufm.followee)
+  followees: UserFollowersModel[];
 }
