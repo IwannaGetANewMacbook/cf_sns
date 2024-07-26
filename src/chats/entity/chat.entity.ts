@@ -1,3 +1,7 @@
+/**
+ * 채팅방 Entity.
+ */
+
 import { BaseModel } from 'src/common/entity/base.entity';
 import { UsersModel } from 'src/users/entity/users.entity';
 import { Entity, ManyToMany, OneToMany } from 'typeorm';

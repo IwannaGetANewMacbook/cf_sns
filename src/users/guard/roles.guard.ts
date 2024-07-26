@@ -33,6 +33,8 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
+    // 이 app전체에 글로벌하게 guard를 적용하기 위해서 해당 로직을 추가하는거.
+    // 즉, @Roles() 애노테이션을 넣지않은 API에서는 bypass 시키기 위함.
     // Roles Annotation이 등록 안되어 있을 때, which means 서버에서 접근제어가 불필요하다고 판단하는 API임.
     if (!requiredRole) {
       return true; // 이 guard를 패스함.

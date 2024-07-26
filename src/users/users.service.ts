@@ -106,12 +106,36 @@ export class UsersService {
     return true;
   }
 
-  async deleteFollow(followerId: number, followingId: number) {
+  async deleteFollow(followerId: number, followeeId: number) {
     await this.userFollowersRepository.delete({
       follower: { id: followerId },
-      followee: { id: followingId },
+      followee: { id: followeeId },
     });
 
     return true;
+  }
+
+  async incrementFollowerCount(userId: number) {
+    await this.usersRepository.increment({ id: userId }, 'followerCount', 1);
+  }
+
+  async decrementFollwerCount(userId: number) {
+    await this.usersRepository.decrement({ id: userId }, 'followerCount', 1);
+  }
+
+  async incrementFolloweeCount(followerId: number) {
+    await this.usersRepository.increment(
+      { id: followerId },
+      'followeeCount',
+      1,
+    );
+  }
+
+  async decrementFolloweeCount(followerId: number) {
+    await this.usersRepository.decrement(
+      { id: followerId },
+      'followeeCount',
+      1,
+    );
   }
 }

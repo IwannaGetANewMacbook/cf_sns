@@ -50,6 +50,9 @@ export class PostsService {
     );
   }
 
+  /**
+   * 일반화 하기 전의 pagePaginatePosts() 함수.
+   */
   // async pagePaginatePosts(dto: PaginatePostDto) {
   //   /** 리턴값.
   //    * data: Data[],
@@ -66,6 +69,10 @@ export class PostsService {
   //     total: count,
   //   };
   // }
+
+  /**
+   * 일반화 하기 전의 cursorPaginatePosts() 함수.
+   */
 
   // async cursorPaginatePosts(dto: PaginatePostDto) {
   //   const where: FindOptionsWhere<PostsModel> = {};
@@ -119,7 +126,7 @@ export class PostsService {
   //   return {
   //     data: posts,
   //     cursor: {
-  //       after: lastItem?.id ?? null, // 여기서 ? 붙여서 lastItem이 null 일 경우 null값을 고대로 넣어줌.
+  //       after: lastItem?.id ?? null, // 여기서 ?? 붙여서 lastItem이 null 일 경우 null값을 고대로 넣어줌.
   //     },
   //     count: posts.length,
   //     next: nextUrl?.toString() ?? null,

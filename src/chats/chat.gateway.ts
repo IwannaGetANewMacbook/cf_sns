@@ -114,12 +114,28 @@ export class ChatsGateway
     }
   }
 
+  /**--------------------------------------------------------------------------------- */
+
+  /**채팅방을 만드는 함수 */
+  @SubscribeMessage('create_chat')
+  async createChat(
+    @MessageBody() data: CreateChatDto,
+    @ConnectedSocket() socket: Socket & { user: UsersModel }, // socket 객체안에 socket.user 가 존재해야 소켓 연결.,
+  ) {
+    const chat = await this.chtasService.createChat(data);
+  }
+
+  /**--------------------------------------------------------------------------------- */
+
+  /** 유저가 채팅방에 들어가기 위한 함수. */
   @SubscribeMessage('enter_chat')
-  // 방의 chat ID들을 리스트로 받는다.
   async enterChat(
+    // 방의 chat ID들을 리스트로 받는다.
     @MessageBody() data: EnterChatDto,
+    // 지금 연결된 소켓들 정보 가져오기.
     @ConnectedSocket() socket: Socket & { user: UsersModel },
   ) {
+    /** 채팅방이 존재하는지 check. */
     for (const chatId of data.chatIds) {
       const exists = await this.chtasService.checkIfChatExists(chatId);
       if (!exists) {
@@ -132,17 +148,11 @@ export class ChatsGateway
       }
     }
 
+    // sokcet.join() 함수는 params로 list를 받아도 list값을 각각 방에 join 해줌.
     socket.join(data.chatIds.map((v) => v.toString()));
   }
 
-  /**채팅방을 만드는 함수 */
-  @SubscribeMessage('create_chat')
-  async createChat(
-    @MessageBody() data: CreateChatDto,
-    @ConnectedSocket() socket: Socket & { user: UsersModel }, // socket 객체안에 socket.user 가 존재해야 소켓 연결.,
-  ) {
-    const chat = await this.chtasService.createChat(data);
-  }
+  /**--------------------------------------------------------------------------------- */
 
   // socket.on('send_message', (message) => {consol.log(message)}))
   @SubscribeMessage('send_message') // 파라미터에 이벤트 이름 넣어주면 됨.

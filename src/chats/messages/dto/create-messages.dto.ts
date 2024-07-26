@@ -4,5 +4,6 @@ import { IsNumber } from 'class-validator';
 
 export class createMessagesDto extends PickType(MessagesModel, ['message']) {
   @IsNumber()
+  /** 채팅방 Id */
   chatId: number;
 }

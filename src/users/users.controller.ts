@@ -56,6 +56,9 @@ export class UsersController {
   ) {
     await this.usersService.confirmFollow(followerId, user.id);
 
+    await this.usersService.incrementFollowerCount(user.id);
+    await this.usersService.incrementFolloweeCount(followerId);
+
     return true;
   }
 
@@ -65,6 +68,9 @@ export class UsersController {
     @Param('id', ParseIntPipe) followeeId: number,
   ) {
     await this.usersService.deleteFollow(user.id, followeeId);
+
+    await this.usersService.decrementFollwerCount(followeeId);
+    await this.usersService.decrementFolloweeCount(user.id);
 
     return true;
   }

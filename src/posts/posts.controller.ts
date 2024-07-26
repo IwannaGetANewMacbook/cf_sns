@@ -94,9 +94,10 @@ export class PostsController {
     return this.postsService.updatePost(id, body.title, body.content);
   }
 
-  @Delete(':id')
-  @Roles(RolesEnum.ADMIN)
-  deletePost(@Param('id', ParseIntPipe) id: number) {
+  @Delete(':postId')
+  // @Roles(RolesEnum.ADMIN)
+  @UseGuards(IsPostMineOrAdminGuard)
+  deletePost(@Param('postId', ParseIntPipe) id: number) {
     return this.postsService.deletePost(id);
   }
 }

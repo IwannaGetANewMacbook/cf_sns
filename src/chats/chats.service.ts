@@ -23,6 +23,7 @@ export class ChatsService {
     );
   }
 
+  // 채팅방 만들기.
   async createChat(dto: CreateChatDto) {
     const chat = await this.chatsRepository.save({
       // e.g. 3명의 사용자의 id가 각각 1, 2, 3 이라면 => [{id:1}, {id:2}, {id:3}] 이렇게 넣어줌.
